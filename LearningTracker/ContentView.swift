@@ -5,20 +5,35 @@
 //  Created by Fay Alabdulqader on 10/11/2026.
 //
 
+
+
 import SwiftUI
 
 struct ContentView: View {
+
+    @AppStorage("learningGoalSubject") private var savedGoalSubject = ""
+    @AppStorage("learningGoalDuration") private var savedGoalDuration = "Week"
+
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+
+        NavigationStack {
+
+            if savedGoalSubject.isEmpty {
+                OnboardingView()
+            } else {
+                ActivityView(
+                    learningGoal: LearningGoal(
+                        subject: savedGoalSubject,
+                        duration: savedGoalDuration
+                    )
+                )
+            }
+
         }
-        .padding()
     }
 }
 
 #Preview {
     ContentView()
 }
+

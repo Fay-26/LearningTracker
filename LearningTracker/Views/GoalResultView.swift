@@ -20,7 +20,7 @@ struct GoalResultView: View {
             // Header
             ActivityHeader {
                 GlassIcon(systemName: "calendar")
-                GlassIcon(systemName: "pencil.circle")
+                GlassIcon(systemName: "pencil.and.outline")
             }
 
             WeekStripView(viewModel: viewModel)
@@ -33,7 +33,7 @@ struct GoalResultView: View {
             // Result message
             Image(systemName: isCompleted ? "hands.clap.fill" : "xmark.seal.fill")
                 .font(.system(size: 46))
-                .foregroundStyle(Color("orange"))
+                .foregroundStyle(Color("apporange"))
                 .padding(.top, 69)
 
             Text(isCompleted ? "Well done!" : "You didn't reach your goal this time.")
@@ -53,7 +53,7 @@ struct GoalResultView: View {
             } label: {
                 OrangeButtonLabel(
                     title: "Set a goal",
-                    systemImage: "pencil.circle",
+                    systemImage: "pencil.and.outline",
                     height: 50,
                     horizontalPadding: 22
                 )

@@ -62,7 +62,7 @@ struct EditLearningGoalView: View {
                             .foregroundStyle(.white)
                             .frame(width: 44, height: 44)
                             .glassEffect(
-                                .regular.tint(Color("orange")).interactive(),
+                                .regular.tint(Color("apporange")).interactive(),
                                 in: Circle()
                             )
                     }
@@ -81,6 +81,7 @@ struct EditLearningGoalView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.black.ignoresSafeArea())
         .ignoresSafeArea(edges: .top)
+        .ignoresSafeArea(.keyboard)
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .navigationBar)
         .alert("Update goal", isPresented: $showingConfirmation) {

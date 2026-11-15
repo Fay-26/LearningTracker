@@ -54,7 +54,7 @@ struct OrangeButtonLabel: View {
         .foregroundStyle(.white)
         .padding(.horizontal, horizontalPadding)
         .frame(height: height)
-        .glassEffect(.regular.tint(Color("orange")).interactive(), in: Capsule())
+        .glassEffect(.regular.tint(Color("apporange")).interactive(), in: Capsule())
     }
 }
 
@@ -75,16 +75,16 @@ struct DayCircle: View {
 
     private var circleColor: Color {
         switch status {
-        case .learned: return Color("orange").opacity(0.25)
-        case .frozen:  return Color("blue").opacity(0.25)
-        case nil:      return isToday ? Color("orange") : .clear
+        case .learned: return Color("apporange").opacity(0.25)
+        case .frozen:  return Color("appblue").opacity(0.25)
+        case nil:      return isToday ? Color("apporange") : .clear
         }
     }
 
     private var textColor: Color {
         switch status {
-        case .learned: return Color("orange")
-        case .frozen:  return Color("blue")
+        case .learned: return Color("apporange")
+        case .frozen:  return Color("appblue")
         case nil:      return .white
         }
     }
@@ -179,14 +179,14 @@ struct StatCards: View {
                 icon: "flame.fill",
                 count: viewModel.learnedDays,
                 title: "Learned",
-                color: Color("orange")
+                color: Color("apporange")
             )
 
             StatCard(
                 icon: "snowflake",
                 count: viewModel.frozenDays,
                 title: "Freezed",
-                color: Color("blue")
+                color: Color("appblue")
             )
         }
     }
@@ -236,11 +236,11 @@ struct GoalForm: View {
             TextField(
                 "",
                 text: $learningGoal,
-                prompt: Text("Enter your goal").foregroundColor(.gray)
+                prompt: Text("Enter your learning goal").foregroundColor(.gray)
             )
             .font(.system(size: 16))
             .foregroundStyle(.white)
-            .tint(Color("orange"))
+            .tint(Color("apporange"))
             .padding(.vertical, 11)
             .overlay(alignment: .bottom) {
                 Rectangle()
@@ -268,7 +268,7 @@ struct GoalForm: View {
                             .padding(.vertical, 12)
                             .glassEffect(
                                 isSelected
-                                ? .regular.tint(Color("orange")).interactive()
+                                ? .regular.tint(Color("apporange")).interactive()
                                 : .regular.interactive(),
                                 in: Capsule()
                             )

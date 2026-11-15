@@ -120,7 +120,7 @@ struct ActivityView: View {
                     .glassEffect(
                         viewModel.hasLearnedToday
                         ? .regular
-                        : .regular.tint(Color("orange")).interactive(),
+                        : .regular.tint(Color("apporange")).interactive(),
                         in: Circle()
                     )
             }
@@ -139,7 +139,7 @@ struct ActivityView: View {
                     .frame(width: 277, height: 46)
                     .glassEffect(
                         viewModel.canFreeze
-                        ? .regular.tint(Color("blue")).interactive()
+                        ? .regular.tint(Color("appblue")).interactive()
                         : .regular,
                         in: Capsule()
                     )

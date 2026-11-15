@@ -36,7 +36,7 @@ struct OnboardingView: View {
             // Logo
             Image(systemName: "flame.fill")
                 .font(.system(size: 36))
-                .foregroundStyle(Color("orange"))
+                .foregroundStyle(Color("apporange"))
                 .frame(maxWidth: .infinity, minHeight: 40)
                 .padding(.bottom, 86)
 
@@ -96,6 +96,7 @@ struct OnboardingView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.black.ignoresSafeArea())
         .ignoresSafeArea(edges: .top)
+        .ignoresSafeArea(.keyboard)
         .toolbar(.hidden, for: .navigationBar)
     }
 }

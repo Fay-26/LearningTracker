@@ -6,7 +6,6 @@
 //
 
 
-
 import SwiftUI
 
 struct EditLearningGoalView: View {
@@ -28,109 +27,67 @@ struct EditLearningGoalView: View {
         self.onSave = onSave
     }
 
+    private var trimmedGoal: String {
+        learningGoal.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
 
             // Header
-            HStack {
-                Button {
-                    dismiss()
-                } label: {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 18))
-                        .foregroundStyle(.white)
-                        .padding(10)
-                        .glassEffect(.regular, in: Circle())
-                }
-                .buttonStyle(.plain)
-
-                Spacer()
-
+            ZStack {
                 Text("Learning Goal")
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(.system(size: 17, weight: .semibold))
                     .foregroundStyle(.white)
 
-                Spacer()
-
-                Button {
-                    showingConfirmation = true
-                } label: {
-                    Image(systemName: "checkmark")
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundStyle(.white)
-                        .padding(10)
-                        .glassEffect(
-                            .regular.tint(Color("orange")),
-                            in: Circle()
-                        )
-                }
-                .buttonStyle(.plain)
-                .disabled(learningGoal.trimmingCharacters(in: .whitespaces).isEmpty)
-            }
-            .padding(.bottom, 35)
-
-            // Learning goal
-            Text("I want to learn")
-                .font(.system(size: 14))
-                .foregroundStyle(.white)
-
-            TextField("", text: $learningGoal,
-                prompt: Text("Enter your goal").foregroundColor(.gray))
-                .font(.system(size: 16))
-                .foregroundStyle(.white)
-                .tint(Color("orange"))
-                .padding(.vertical, 12)
-                .overlay(alignment: .bottom) {
-                    Rectangle()
-                        .fill(Color.gray.opacity(0.25))
-                        .frame(height: 1)
-                }
-
-            // Duration
-            Text("I want to learn it in a")
-                .font(.system(size: 14))
-                .foregroundStyle(.white)
-                .padding(.top, 30)
-                .padding(.bottom, 15)
-
-            HStack(spacing: 10) {
-                ForEach(["Week", "Month", "Year"], id: \.self) { duration in
+                HStack {
                     Button {
-                        selectedDuration = duration
+                        dismiss()
                     } label: {
-                        Text(duration)
-                            .font(.system(size: 14))
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 18))
                             .foregroundStyle(.white)
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 10)
+                            .frame(width: 44, height: 44)
+                            .glassEffect(.regular.interactive(), in: Circle())
+                    }
+                    .buttonStyle(.plain)
+
+                    Spacer()
+
+                    Button {
+                        showingConfirmation = true
+                    } label: {
+                        Image(systemName: "checkmark")
+                            .font(.system(size: 18, weight: .semibold))
+                            .foregroundStyle(.white)
+                            .frame(width: 44, height: 44)
                             .glassEffect(
-                                selectedDuration == duration
-                                ? .regular.tint(Color("orange"))
-                                : .regular,
-                                in: Capsule()
+                                .regular.tint(Color("orange")).interactive(),
+                                in: Circle()
                             )
                     }
                     .buttonStyle(.plain)
+                    .disabled(trimmedGoal.isEmpty)
                 }
             }
 
+            GoalForm(learningGoal: $learningGoal, selectedDuration: $selectedDuration)
+                .padding(.top, 46)
+
             Spacer()
         }
-        .padding(.horizontal, 20)
-        .padding(.top, 15)
+        .padding(.horizontal, 17)
+        .padding(.top, 54)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(.systemBackground))
+        .background(Color.black.ignoresSafeArea())
+        .ignoresSafeArea(edges: .top)
         .navigationBarBackButtonHidden(true)
+        .toolbar(.hidden, for: .navigationBar)
         .alert("Update goal", isPresented: $showingConfirmation) {
             Button("Dismiss", role: .cancel) { }
 
             Button("Update") {
-                let updatedGoal = LearningGoal(
-                    subject: learningGoal.trimmingCharacters(in: .whitespaces),
-                    duration: selectedDuration
-                )
-
-                onSave(updatedGoal)
+                onSave(LearningGoal(subject: trimmedGoal, duration: selectedDuration))
                 dismiss()
             }
         } message: {

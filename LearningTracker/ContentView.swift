@@ -6,7 +6,6 @@
 //
 
 
-
 import SwiftUI
 
 struct ContentView: View {
@@ -15,9 +14,7 @@ struct ContentView: View {
     @AppStorage("learningGoalDuration") private var savedGoalDuration = "Week"
 
     var body: some View {
-
         NavigationStack {
-
             if savedGoalSubject.isEmpty {
                 OnboardingView()
             } else {
@@ -28,12 +25,12 @@ struct ContentView: View {
                     )
                 )
             }
-
         }
+        // Orange alert buttons ("Update") like the prototype
+        .tint(Color("orange"))
     }
 }
 
 #Preview {
     ContentView()
 }
-

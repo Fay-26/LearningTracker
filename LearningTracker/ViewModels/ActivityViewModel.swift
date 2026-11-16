@@ -4,7 +4,6 @@
 //
 //  Created by Fay Alabdulqader on 10/11/2026.
 //
-
 import Foundation
 import Combine
 
@@ -265,7 +264,7 @@ class ActivityViewModel: ObservableObject {
         }?.status
     }
 
-    // Update goal and reset streak and goal period
+    // Update goal and reset streak, freezes and goal period
     func updateLearningGoal(_ newGoal: LearningGoal) {
         learningGoal = newGoal
 
@@ -279,6 +278,12 @@ class ActivityViewModel: ObservableObject {
             newGoal.duration,
             forKey: "learningGoalDuration"
         )
+
+        // NEW: clear all progress so the new goal starts from zero.
+        // This resets the streak, freezes used, learned/frozen counts
+        // and today's status, because they are all calculated from records.
+        records = []
+        saveRecords()
 
         streakResetDate = Date()
 

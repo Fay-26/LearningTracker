@@ -5,6 +5,7 @@
 //  Created by Fay Alabdulqader on 10/11/2026.
 //
 
+
 import Foundation
 import Combine
 
@@ -15,8 +16,10 @@ class ActivityViewModel: ObservableObject {
     private let storageKey = "activityRecords"
     private let streakResetKey = "streakResetDate"
     private let goalStartDateKey = "goalStartDate"
+    private let goalHistoryKey = "goalHistory"
 
     @Published private(set) var records: [ActivityRecord] = []
+    @Published private(set) var goalHistory: [GoalHistory] = []
 
     @Published var learnedDays = 0
     @Published var frozenDays = 0
@@ -136,7 +139,6 @@ class ActivityViewModel: ObservableObject {
 
         self.learningGoal = learningGoal
 
-        // Save the learning goal
         UserDefaults.standard.set(
             learningGoal.subject,
             forKey: "learningGoalSubject"
@@ -161,6 +163,7 @@ class ActivityViewModel: ObservableObject {
         )
 
         loadRecords()
+        loadGoalHistory()
         refresh()
     }
 
@@ -191,6 +194,32 @@ class ActivityViewModel: ObservableObject {
         }
 
         UserDefaults.standard.set(data, forKey: storageKey)
+    }
+
+    // Load saved goal history
+    private func loadGoalHistory() {
+
+        guard
+            let data = UserDefaults.standard.data(forKey: goalHistoryKey),
+            let savedHistory = try? JSONDecoder().decode(
+                [GoalHistory].self,
+                from: data
+            )
+        else {
+            return
+        }
+
+        goalHistory = savedHistory
+    }
+
+    // Save goal history
+    private func saveGoalHistory() {
+
+        guard let data = try? JSONEncoder().encode(goalHistory) else {
+            return
+        }
+
+        UserDefaults.standard.set(data, forKey: goalHistoryKey)
     }
 
     // Update daily counts and today's status
@@ -290,12 +319,38 @@ class ActivityViewModel: ObservableObject {
         }?.status
     }
 
+    // Archive the current goal before starting a new one
+    private func archiveCurrentGoal() {
+
+        let archiveDate = min(Date(), goalEndDate)
+
+        let currentGoalRecords = records.filter {
+            $0.date >= goalStartDate &&
+            $0.date < archiveDate
+        }
+
+        let history = GoalHistory(
+            learningGoal: learningGoal,
+            startDate: goalStartDate,
+            endDate: archiveDate,
+            records: currentGoalRecords
+        )
+
+        goalHistory.append(history)
+
+        saveGoalHistory()
+    }
+
     // Update goal and reset streak and goal period
     func updateLearningGoal(_ newGoal: LearningGoal) {
 
+        archiveCurrentGoal()
+
+        records = []
+        saveRecords()
+
         learningGoal = newGoal
 
-        // Save updated learning goal
         UserDefaults.standard.set(
             newGoal.subject,
             forKey: "learningGoalSubject"
@@ -305,8 +360,6 @@ class ActivityViewModel: ObservableObject {
             newGoal.duration,
             forKey: "learningGoalDuration"
         )
-
-        // Keep previous activity records
 
         streakResetDate = Date()
 

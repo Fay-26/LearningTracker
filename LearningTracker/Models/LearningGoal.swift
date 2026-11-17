@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct LearningGoal {
+struct LearningGoal: Codable {
 
     var subject: String
     var duration: String

@@ -26,7 +26,7 @@ struct ContentView: View {
                 )
             }
         }
-        // Orange alert buttons ("Update") like the prototype
+        // Orange alert buttons ("Update") l
         .tint(Color("apporange"))
     }
 }

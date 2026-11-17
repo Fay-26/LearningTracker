@@ -5,11 +5,14 @@
 //  Created by Fay Alabdulqader on 12/11/2026.
 //
 
+
+
 import SwiftUI
 
 struct CalendarView: View {
 
     @ObservedObject var viewModel: ActivityViewModel
+
     @Environment(\.dismiss) private var dismiss
 
     @State private var selectedRecord: ActivityRecord?
@@ -21,21 +24,106 @@ struct CalendarView: View {
         count: 7
     )
 
-    // All 12 months of the current year
+    // Current goal period
+    private var selectedStartDate: Date {
+        viewModel.goalStartDate
+    }
+
+    private var selectedEndDate: Date {
+        viewModel.goalEndDate
+    }
+
+    // Combine current and previous goal activities
+    private var selectedRecords: [ActivityRecord] {
+
+        let previousRecords = viewModel.goalHistory.flatMap {
+            $0.records
+        }
+
+        return (previousRecords + viewModel.records)
+            .sorted { $0.date < $1.date }
+    }
+
+    // All months from the first activity through December
+    // of the current year, with at least one full calendar year
     private var months: [Date] {
 
         let calendar = Calendar.current
-        let year = calendar.component(.year, from: Date())
 
-        guard let firstMonth = calendar.date(
-            from: DateComponents(year: year, month: 1, day: 1)
-        ) else {
+        let currentYear = calendar.component(.year, from: Date())
+
+        guard
+            let january = calendar.date(
+                from: DateComponents(
+                    year: currentYear,
+                    month: 1,
+                    day: 1
+                )
+            ),
+            let december = calendar.date(
+                from: DateComponents(
+                    year: currentYear,
+                    month: 12,
+                    day: 1
+                )
+            )
+        else {
             return []
         }
 
-        return (0..<12).compactMap {
-            calendar.date(byAdding: .month, value: $0, to: firstMonth)
+        let firstActivity = selectedRecords
+            .map { $0.date }
+            .min()
+
+        let firstMonth = firstActivity.flatMap {
+            calendar.dateInterval(of: .month, for: $0)?.start
+        } ?? january
+
+        let startMonth = min(firstMonth, january)
+
+        let monthCount = calendar.dateComponents(
+            [.month],
+            from: startMonth,
+            to: december
+        ).month ?? 0
+
+        return (0...max(0, monthCount)).compactMap {
+            calendar.date(
+                byAdding: .month,
+                value: $0,
+                to: startMonth
+            )
         }
+    }
+
+    // Get historical subject if an older record has no subject saved
+    private func subject(for record: ActivityRecord) -> String {
+
+        if let subject = record.subject {
+            return subject
+        }
+
+        let historicalGoal = viewModel.goalHistory.first {
+            $0.records.contains { $0.id == record.id }
+        }
+
+        return historicalGoal?.learningGoal.subject
+            ?? viewModel.learningGoal.subject
+    }
+
+    // Get historical duration if an older record has no duration saved
+    private func duration(for record: ActivityRecord) -> String {
+
+        if let duration = record.duration {
+            return duration
+        }
+
+        let historicalGoal = viewModel.goalHistory.first {
+            $0.records.contains { $0.id == record.id }
+        }
+
+        return historicalGoal?.learningGoal.duration
+            ?? viewModel.learningGoal.duration
     }
 
     var body: some View {
@@ -68,9 +156,9 @@ struct CalendarView: View {
             }
             .padding(.horizontal, 15)
             .padding(.top, 62)
-            .padding(.bottom, 28)
+            .padding(.bottom, 20)
 
-            // Scroll to the current month when the calendar opens
+            // Calendar
             ScrollViewReader { proxy in
 
                 ScrollView {
@@ -115,28 +203,39 @@ struct CalendarView: View {
             VStack(spacing: 22) {
 
                 // Activity icon
-                Image(systemName: record.status == .learned
-                      ? "checkmark"
-                      : "snowflake")
-                    .font(.system(size: 25, weight: .semibold))
-                    .foregroundStyle(activityColor)
-                    .frame(width: 62, height: 62)
-                    .glassEffect(
-                        .regular.tint(activityColor),
-                        in: Circle()
-                    )
-                    .padding(.top, 12)
+                Image(
+                    systemName: record.status == .learned
+                        ? "checkmark"
+                        : "snowflake"
+                )
+                .font(.system(size: 25, weight: .semibold))
+                .foregroundStyle(activityColor)
+                .frame(width: 62, height: 62)
+                .glassEffect(
+                    .regular.tint(activityColor),
+                    in: Circle()
+                )
+                .padding(.top, 12)
 
                 // Activity title and date
                 VStack(spacing: 7) {
 
-                    Text(record.status == .learned ? "Learned" : "Frozen Day")
-                        .font(.system(size: 23, weight: .bold))
-                        .foregroundStyle(.white)
+                    Text(
+                        record.status == .learned
+                            ? "Learned"
+                            : "Frozen Day"
+                    )
+                    .font(.system(size: 23, weight: .bold))
+                    .foregroundStyle(.white)
 
-                    Text(record.date.formatted(date: .complete, time: .omitted))
-                        .font(.system(size: 14))
-                        .foregroundStyle(.gray)
+                    Text(
+                        record.date.formatted(
+                            date: .complete,
+                            time: .omitted
+                        )
+                    )
+                    .font(.system(size: 14))
+                    .foregroundStyle(.gray)
                 }
 
                 // Activity details card
@@ -146,7 +245,7 @@ struct CalendarView: View {
                         title: record.status == .learned
                             ? "What you learned"
                             : "Learning goal",
-                        value: record.subject ?? "Not available"
+                        value: subject(for: record)
                     )
 
                     Rectangle()
@@ -155,7 +254,7 @@ struct CalendarView: View {
 
                     detailRow(
                         title: "Goal duration",
-                        value: record.duration ?? "Not available"
+                        value: duration(for: record)
                     )
                 }
                 .padding(20)
@@ -230,39 +329,60 @@ struct CalendarView: View {
         let calendar = Calendar.current
 
         guard
-            let firstDay = calendar.dateInterval(of: .month, for: month)?.start,
-            let range = calendar.range(of: .day, in: .month, for: month)
+            let firstDay = calendar.dateInterval(
+                of: .month,
+                for: month
+            )?.start,
+            let range = calendar.range(
+                of: .day,
+                in: .month,
+                for: month
+            )
         else {
             return []
         }
 
-        let emptyDays = calendar.component(.weekday, from: firstDay) - 1
+        let emptyDays = calendar.component(
+            .weekday,
+            from: firstDay
+        ) - 1
 
         return Array(repeating: nil, count: emptyDays) + range.compactMap {
-            calendar.date(byAdding: .day, value: $0 - 1, to: firstDay)
+
+            calendar.date(
+                byAdding: .day,
+                value: $0 - 1,
+                to: firstDay
+            )
         }
     }
 
-    // Show every date and highlight the current learning goal period
+    // Show dates and activities
     @ViewBuilder
     private func dayView(for date: Date?) -> some View {
 
         if let date {
 
-            let isCurrentGoalPeriod =
-                date >= Calendar.current.startOfDay(for: viewModel.goalStartDate) &&
-                date < viewModel.goalEndDate
+            let calendar = Calendar.current
+
+            let activity = selectedRecords.first {
+                calendar.isDate($0.date, inSameDayAs: date)
+            }
+
+            let isSelectedGoalPeriod =
+                date >= calendar.startOfDay(for: selectedStartDate) &&
+                date < selectedEndDate
 
             DayCircle(
                 date: date,
-                status: viewModel.status(for: date),
+                status: activity?.status,
                 size: 39,
                 fontSize: 17
             )
             .frame(width: 43, height: 43)
             .overlay {
 
-                if isCurrentGoalPeriod {
+                if isSelectedGoalPeriod {
 
                     RoundedRectangle(cornerRadius: 11)
                         .stroke(
@@ -275,9 +395,7 @@ struct CalendarView: View {
             .contentShape(Rectangle())
             .onTapGesture {
 
-                selectedRecord = viewModel.records.first {
-                    Calendar.current.isDate($0.date, inSameDayAs: date)
-                }
+                selectedRecord = activity
             }
             .frame(maxWidth: .infinity)
 

@@ -279,7 +279,7 @@ class ActivityViewModel: ObservableObject {
             forKey: "learningGoalDuration"
         )
 
-        // NEW: clear all progress so the new goal starts from zero.
+        // clear all progress so the new goal starts from zero.
         // This resets the streak, freezes used, learned/frozen counts
         // and today's status, because they are all calculated from records.
         records = []

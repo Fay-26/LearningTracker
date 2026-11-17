@@ -156,7 +156,6 @@ struct ActivityView: View {
         .padding(.top, 65)
         .padding(.bottom, 49)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color.black.ignoresSafeArea())
         .ignoresSafeArea(edges: .top)
     }
 }

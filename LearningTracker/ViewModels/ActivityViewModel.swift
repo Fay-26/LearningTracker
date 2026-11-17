@@ -180,22 +180,28 @@ class ActivityViewModel: ObservableObject {
 
     // Update daily counts and today's status
     private func updateCounts() {
-        learnedDays = records.filter {
+
+        let currentGoalRecords = records.filter {
+            $0.date >= goalStartDate &&
+            $0.date < goalEndDate
+        }
+
+        learnedDays = currentGoalRecords.filter {
             $0.status == .learned
         }.count
 
-        frozenDays = records.filter {
+        frozenDays = currentGoalRecords.filter {
             $0.status == .frozen
         }.count
 
         let today = Calendar.current.startOfDay(for: Date())
 
-        hasLearnedToday = records.contains {
+        hasLearnedToday = currentGoalRecords.contains {
             Calendar.current.isDate($0.date, inSameDayAs: today) &&
             $0.status == .learned
         }
 
-        hasFrozenToday = records.contains {
+        hasFrozenToday = currentGoalRecords.contains {
             Calendar.current.isDate($0.date, inSameDayAs: today) &&
             $0.status == .frozen
         }
@@ -279,11 +285,7 @@ class ActivityViewModel: ObservableObject {
             forKey: "learningGoalDuration"
         )
 
-        // clear all progress so the new goal starts from zero.
-        // This resets the streak, freezes used, learned/frozen counts
-        // and today's status, because they are all calculated from records.
-        records = []
-        saveRecords()
+   
 
         streakResetDate = Date()
 

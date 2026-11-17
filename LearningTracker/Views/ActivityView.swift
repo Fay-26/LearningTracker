@@ -16,6 +16,7 @@ struct ActivityView: View {
 
     @State private var showingGoalEditor = false
     @State private var showingNewGoal = false
+    @State private var showingCalendar = false
 
     private let refreshTimer = Timer.publish(
         every: 60,
@@ -34,10 +35,17 @@ struct ActivityView: View {
             if viewModel.isGoalPeriodFinished {
                 GoalResultView(
                     viewModel: viewModel,
-                    isCompleted: viewModel.isGoalCompleted
-                ) {
-                    showingNewGoal = true
-                }
+                    isCompleted: viewModel.isGoalCompleted,
+                    onSetNewGoal: {
+                        showingNewGoal = true
+                    },
+                    onOpenCalendar: {
+                        showingCalendar = true
+                    },
+                    onEditGoal: {
+                        showingGoalEditor = true
+                    }
+                )
             } else {
                 activityContent
             }
@@ -60,6 +68,9 @@ struct ActivityView: View {
             ) { updatedGoal in
                 viewModel.updateLearningGoal(updatedGoal)
             }
+        }
+        .navigationDestination(isPresented: $showingCalendar) {
+            CalendarView(viewModel: viewModel)
         }
 
         // Set a new goal

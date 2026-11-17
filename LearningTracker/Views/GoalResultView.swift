@@ -13,14 +13,26 @@ struct GoalResultView: View {
 
     let isCompleted: Bool
     let onSetNewGoal: () -> Void
+    var onOpenCalendar: () -> Void = {}
+    var onEditGoal: () -> Void = {}
 
     var body: some View {
         VStack(spacing: 0) {
 
             // Header
             ActivityHeader {
-                GlassIcon(systemName: "calendar")
-                GlassIcon(systemName: "pencil.and.outline")
+
+                Button {
+                    onOpenCalendar()
+                } label: {
+                    GlassIcon(systemName: "calendar")
+                }
+
+                Button {
+                    onEditGoal()
+                } label: {
+                    GlassIcon(systemName: "pencil.and.outline")
+                }
             }
 
             WeekStripView(viewModel: viewModel)
@@ -66,7 +78,94 @@ struct GoalResultView: View {
         .padding(.horizontal, 7)
         .padding(.top, 65)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color.black.ignoresSafeArea())
         .ignoresSafeArea(edges: .top)
     }
+}
+
+#Preview("Goal Completed") {
+    let viewModel = ActivityViewModel(
+        learningGoal: LearningGoal(
+            subject: "SwiftUI",
+            duration: "Week"
+        )
+    )
+
+    GoalResultView(
+        viewModel: viewModel,
+        isCompleted: true,
+        onSetNewGoal: {}
+    )
+}
+
+#Preview("Goal Not Completed") {
+    let viewModel = ActivityViewModel(
+        learningGoal: LearningGoal(
+            subject: "SwiftUI",
+            duration: "Week"
+        )
+    )
+
+    GoalResultView(
+        viewModel: viewModel,
+        isCompleted: false,
+        onSetNewGoal: {}
+    )
+}
+
+private enum GoalResultDebugSheet: String, Identifiable {
+    case calendar
+    case editGoal
+    case onboarding
+
+    var id: String { rawValue }
+}
+
+private struct GoalResultDebugPreview: View {
+
+    @StateObject private var viewModel = ActivityViewModel(
+        learningGoal: LearningGoal(
+            subject: "SwiftUI",
+            duration: "Week"
+        )
+    )
+
+    @State private var activeSheet: GoalResultDebugSheet?
+
+    var body: some View {
+
+        GoalResultView(
+            viewModel: viewModel,
+            isCompleted: true,
+            onSetNewGoal: {
+                activeSheet = .onboarding
+            },
+            onOpenCalendar: {
+                activeSheet = .calendar
+            },
+            onEditGoal: {
+                activeSheet = .editGoal
+            }
+        )
+        .sheet(item: $activeSheet) { sheet in
+
+            switch sheet {
+
+            case .calendar:
+                CalendarView(viewModel: viewModel)
+
+            case .editGoal:
+                EditLearningGoalView(
+                    existingGoal: viewModel.learningGoal,
+                    onSave: { _ in }
+                )
+
+            case .onboarding:
+                OnboardingView()
+            }
+        }
+    }
+}
+
+#Preview("Test Goal Result Buttons") {
+    GoalResultDebugPreview()
 }

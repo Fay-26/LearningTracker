@@ -7,11 +7,7 @@
 
 import SwiftUI
 
-// All sizes are measured from the prototype on a 402 x 874 pt screen.
 
-// MARK: - Date text
-
-/// "Thursday, 24 October" on every device
 func headerDateString(_ date: Date = .now) -> String {
     let formatter = DateFormatter()
     formatter.locale = Locale(identifier: "en_GB")

@@ -4,6 +4,7 @@
 //
 //  Created by Fay Alabdulqader on 10/11/2026.
 //
+
 import Foundation
 import Combine
 
@@ -19,15 +20,19 @@ class ActivityViewModel: ObservableObject {
 
     @Published var learnedDays = 0
     @Published var frozenDays = 0
+
     @Published var hasLearnedToday = false
     @Published var hasFrozenToday = false
+
     @Published private(set) var currentStreak = 0
 
     private var streakResetDate: Date?
+
     @Published private(set) var goalStartDate: Date
 
     // Maximum freezes
     var maximumFreezes: Int {
+
         switch learningGoal.duration {
         case "Week": return 2
         case "Month": return 8
@@ -38,6 +43,7 @@ class ActivityViewModel: ObservableObject {
 
     // Freezes used during the current goal period
     var freezesUsed: Int {
+
         records.filter {
             $0.status == .frozen &&
             $0.date >= goalStartDate &&
@@ -46,6 +52,7 @@ class ActivityViewModel: ObservableObject {
     }
 
     var canFreeze: Bool {
+
         freezesUsed < maximumFreezes &&
         !hasLearnedToday &&
         !hasFrozenToday
@@ -53,9 +60,11 @@ class ActivityViewModel: ObservableObject {
 
     // Goal end date
     var goalEndDate: Date {
+
         let calendar = Calendar.current
 
         switch learningGoal.duration {
+
         case "Week":
             return calendar.date(
                 byAdding: .day,
@@ -89,6 +98,7 @@ class ActivityViewModel: ObservableObject {
 
     // Did the user learn every day?
     var isGoalCompleted: Bool {
+
         guard isGoalPeriodFinished else {
             return false
         }
@@ -99,6 +109,7 @@ class ActivityViewModel: ObservableObject {
         while date < goalEndDate {
 
             let learnedOnThisDay = records.contains { record in
+
                 calendar.isDate(record.date, inSameDayAs: date) &&
                 record.status == .learned
             }
@@ -122,6 +133,7 @@ class ActivityViewModel: ObservableObject {
     }
 
     init(learningGoal: LearningGoal) {
+
         self.learningGoal = learningGoal
 
         // Save the learning goal
@@ -154,6 +166,7 @@ class ActivityViewModel: ObservableObject {
 
     // Load saved records
     private func loadRecords() {
+
         guard
             let data = UserDefaults.standard.data(forKey: storageKey),
             let savedRecords = try? JSONDecoder().decode(
@@ -165,12 +178,14 @@ class ActivityViewModel: ObservableObject {
         }
 
         records = savedRecords
+
         updateCounts()
         updateStreak()
     }
 
     // Save records
     private func saveRecords() {
+
         guard let data = try? JSONEncoder().encode(records) else {
             return
         }
@@ -209,8 +224,10 @@ class ActivityViewModel: ObservableObject {
 
     // Calculate streak
     private func updateStreak() {
+
         let sortedRecords = records
             .filter { record in
+
                 guard let streakResetDate else {
                     return true
                 }
@@ -239,6 +256,7 @@ class ActivityViewModel: ObservableObject {
         var index = sortedRecords.count - 1
 
         while index > 0 {
+
             let currentDate = sortedRecords[index].date
             let previousDate = sortedRecords[index - 1].date
 
@@ -255,6 +273,7 @@ class ActivityViewModel: ObservableObject {
 
     // Refresh daily status and streak
     func refresh() {
+
         updateCounts()
         updateStreak()
     }
@@ -265,13 +284,15 @@ class ActivityViewModel: ObservableObject {
 
     // Get activity status for a calendar date
     func status(for date: Date) -> ActivityStatus? {
+
         return records.first {
             Calendar.current.isDate($0.date, inSameDayAs: date)
         }?.status
     }
 
-    // Update goal and reset streak, freezes and goal period
+    // Update goal and reset streak and goal period
     func updateLearningGoal(_ newGoal: LearningGoal) {
+
         learningGoal = newGoal
 
         // Save updated learning goal
@@ -285,7 +306,7 @@ class ActivityViewModel: ObservableObject {
             forKey: "learningGoalDuration"
         )
 
-   
+        // Keep previous activity records
 
         streakResetDate = Date()
 
@@ -302,11 +323,13 @@ class ActivityViewModel: ObservableObject {
         )
 
         currentStreak = 0
+
         refresh()
     }
 
     // Log as learned
     func logAsLearned() {
+
         refresh()
 
         guard !hasLearnedToday && !hasFrozenToday else {
@@ -315,16 +338,20 @@ class ActivityViewModel: ObservableObject {
 
         let newRecord = ActivityRecord(
             date: Date(),
-            status: .learned
+            status: .learned,
+            subject: learningGoal.subject,
+            duration: learningGoal.duration
         )
 
         records.append(newRecord)
+
         saveRecords()
         refresh()
     }
 
     // Freeze a day
     func freezeDay() {
+
         refresh()
 
         guard canFreeze else {
@@ -333,10 +360,13 @@ class ActivityViewModel: ObservableObject {
 
         let newRecord = ActivityRecord(
             date: Date(),
-            status: .frozen
+            status: .frozen,
+            subject: learningGoal.subject,
+            duration: learningGoal.duration
         )
 
         records.append(newRecord)
+
         saveRecords()
         refresh()
     }

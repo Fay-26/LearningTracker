@@ -36,7 +36,7 @@ struct OnboardingView: View {
 
             // Logo
             Image(systemName: "flame.fill")
-                .font(.system(size: 36))
+                .font(.system(size: 40))
                 .foregroundStyle(Color("apporange"))
                 .frame(maxWidth: .infinity, minHeight: 40)
                 .padding(.bottom, 86)

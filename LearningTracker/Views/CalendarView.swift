@@ -10,6 +10,7 @@ import SwiftUI
 struct CalendarView: View {
 
     @ObservedObject var viewModel: ActivityViewModel
+
     @Environment(\.dismiss) private var dismiss
 
     private let weekdays = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"]
@@ -19,24 +20,19 @@ struct CalendarView: View {
         count: 7
     )
 
-    // Months that contain the learning period
+    // All 12 months of the current year
     private var months: [Date] {
         let calendar = Calendar.current
+        let year = calendar.component(.year, from: Date())
 
-        guard
-            let first = calendar.dateInterval(of: .month, for: viewModel.goalStartDate)?.start,
-            let last = calendar.dateInterval(
-                of: .month,
-                for: viewModel.goalEndDate.addingTimeInterval(-1)
-            )?.start
-        else {
+        guard let firstMonth = calendar.date(
+            from: DateComponents(year: year, month: 1, day: 1)
+        ) else {
             return []
         }
 
-        let count = calendar.dateComponents([.month], from: first, to: last).month ?? 0
-
-        return (0...count).compactMap {
-            calendar.date(byAdding: .month, value: $0, to: first)
+        return (0..<12).compactMap {
+            calendar.date(byAdding: .month, value: $0, to: firstMonth)
         }
     }
 
@@ -68,14 +64,27 @@ struct CalendarView: View {
             .padding(.top, 62)
             .padding(.bottom, 28)
 
-            ScrollView {
-                LazyVStack(spacing: 16) {
-                    ForEach(months, id: \.self) { month in
-                        monthView(for: month)
+            // Scroll to the current month when the calendar opens
+            ScrollViewReader { proxy in
+                ScrollView {
+                    LazyVStack(spacing: 16) {
+                        ForEach(months, id: \.self) { month in
+                            monthView(for: month)
+                                .id(month)
+                        }
                     }
+                    .padding(.horizontal, 8)
+                    .padding(.bottom, 20)
                 }
-                .padding(.horizontal, 8)
-                .padding(.bottom, 20)
+                .onAppear {
+                    let calendar = Calendar.current
+                    let currentMonth = calendar.dateInterval(
+                        of: .month,
+                        for: Date()
+                    )?.start ?? Date()
+
+                    proxy.scrollTo(currentMonth, anchor: .top)
+                }
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -94,6 +103,8 @@ struct CalendarView: View {
                 .padding(.leading, 13)
 
             VStack(spacing: 9) {
+
+                // Weekday names
                 LazyVGrid(columns: columns, spacing: 0) {
                     ForEach(weekdays, id: \.self) { day in
                         Text(day)
@@ -103,8 +114,12 @@ struct CalendarView: View {
                     }
                 }
 
+                // Days of the month
                 LazyVGrid(columns: columns, spacing: 14) {
-                    ForEach(Array(daysInMonth(for: month).enumerated()), id: \.offset) { _, date in
+                    ForEach(
+                        Array(daysInMonth(for: month).enumerated()),
+                        id: \.offset
+                    ) { _, date in
                         dayView(for: date)
                     }
                 }
@@ -136,12 +151,14 @@ struct CalendarView: View {
         }
     }
 
-    // Only dates inside the learning period are shown
+    // Show every date and highlight the current learning goal period
     @ViewBuilder
     private func dayView(for date: Date?) -> some View {
-        if let date,
-           date >= viewModel.goalStartDate,
-           date < viewModel.goalEndDate {
+        if let date {
+
+            let isCurrentGoalPeriod =
+                date >= Calendar.current.startOfDay(for: viewModel.goalStartDate) &&
+                date < viewModel.goalEndDate
 
             DayCircle(
                 date: date,
@@ -149,10 +166,21 @@ struct CalendarView: View {
                 size: 39,
                 fontSize: 17
             )
+            .frame(width: 43, height: 43)
+            .overlay {
+                if isCurrentGoalPeriod {
+                    RoundedRectangle(cornerRadius: 11)
+                        .stroke(
+                            Color.orange.opacity(0.85),
+                            lineWidth: 1
+                        )
+                        .padding(1)
+                }
+            }
             .frame(maxWidth: .infinity)
 
         } else {
-            Color.clear.frame(height: 39)
+            Color.clear.frame(height: 43)
         }
     }
 }

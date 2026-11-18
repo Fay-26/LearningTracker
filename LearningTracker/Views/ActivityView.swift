@@ -5,12 +5,14 @@
 //  Created by Fay Alabdulqader on 10/11/2026.
 //
 
+
 import SwiftUI
 import Combine
 
 struct ActivityView: View {
 
     @StateObject private var viewModel: ActivityViewModel
+    @StateObject private var clock: DebugClock
 
     @Environment(\.scenePhase) private var scenePhase
 
@@ -25,14 +27,27 @@ struct ActivityView: View {
     ).autoconnect()
 
     init(learningGoal: LearningGoal) {
+
+        let debugClock = DebugClock()
+
+        _clock = StateObject(
+            wrappedValue: debugClock
+        )
+
         _viewModel = StateObject(
-            wrappedValue: ActivityViewModel(learningGoal: learningGoal)
+            wrappedValue: ActivityViewModel(
+                learningGoal: learningGoal,
+                now: { debugClock.currentDate }
+            )
         )
     }
 
     var body: some View {
+
         Group {
+
             if viewModel.isGoalPeriodFinished {
+
                 GoalResultView(
                     viewModel: viewModel,
                     isCompleted: viewModel.isGoalCompleted,
@@ -46,36 +61,46 @@ struct ActivityView: View {
                         showingGoalEditor = true
                     }
                 )
+
             } else {
+
                 activityContent
             }
         }
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .navigationBar)
+
         .onReceive(refreshTimer) { _ in
             viewModel.refresh()
         }
+
         .onChange(of: scenePhase) { _, newPhase in
+
             if newPhase == .active {
                 viewModel.refresh()
             }
         }
 
-        // Edit learning goal (pushed screen)
+        // Edit learning goal
         .navigationDestination(isPresented: $showingGoalEditor) {
+
             EditLearningGoalView(
                 existingGoal: viewModel.learningGoal
             ) { updatedGoal in
+
                 viewModel.updateLearningGoal(updatedGoal)
             }
         }
+
         .navigationDestination(isPresented: $showingCalendar) {
             CalendarView(viewModel: viewModel)
         }
 
         // Set a new goal
         .sheet(isPresented: $showingNewGoal) {
+
             NavigationStack {
+
                 OnboardingView { newGoal in
                     viewModel.updateLearningGoal(newGoal)
                 }
@@ -85,17 +110,21 @@ struct ActivityView: View {
     }
 
     private var freezeTitle: String {
+
         let noFreezesLeft = viewModel.freezesUsed >= viewModel.maximumFreezes
+
         return (viewModel.hasFrozenToday || noFreezesLeft)
-        ? "Freezed for a day"
-        : "Freeze for a day"
+            ? "Freezed for a day"
+            : "Freeze for a day"
     }
 
     private var activityContent: some View {
+
         VStack(spacing: 0) {
 
             // Header
             ActivityHeader {
+
                 NavigationLink {
                     CalendarView(viewModel: viewModel)
                 } label: {
@@ -122,18 +151,27 @@ struct ActivityView: View {
 
             // Log as Learned
             Button {
+
                 viewModel.logAsLearned()
+
             } label: {
-                Text(viewModel.hasLearnedToday ? "Logged as Learned" : "Log as Learned")
-                    .font(.system(size: 17, weight: .semibold))
-                    .foregroundStyle(viewModel.hasLearnedToday ? .gray : .white)
-                    .frame(width: 277, height: 277)
-                    .glassEffect(
-                        viewModel.hasLearnedToday
+
+                Text(
+                    viewModel.hasLearnedToday
+                        ? "Logged as Learned"
+                        : "Log as Learned"
+                )
+                .font(.system(size: 17, weight: .semibold))
+                .foregroundStyle(
+                    viewModel.hasLearnedToday ? .gray : .white
+                )
+                .frame(width: 277, height: 277)
+                .glassEffect(
+                    viewModel.hasLearnedToday
                         ? .regular
                         : .regular.tint(Color("apporange")).interactive(),
-                        in: Circle()
-                    )
+                    in: Circle()
+                )
             }
             .buttonStyle(.plain)
             .disabled(viewModel.hasLearnedToday || viewModel.hasFrozenToday)
@@ -142,39 +180,57 @@ struct ActivityView: View {
 
             // Freeze
             Button {
+
                 viewModel.freezeDay()
+
             } label: {
+
                 Text(freezeTitle)
                     .font(.system(size: 17, weight: .semibold))
                     .foregroundStyle(viewModel.canFreeze ? .white : .gray)
                     .frame(width: 277, height: 46)
                     .glassEffect(
                         viewModel.canFreeze
-                        ? .regular.tint(Color("appblue")).interactive()
-                        : .regular,
+                            ? .regular.tint(Color("appblue")).interactive()
+                            : .regular,
                         in: Capsule()
                     )
             }
             .buttonStyle(.plain)
             .disabled(!viewModel.canFreeze)
 
-            Text("\(viewModel.freezesUsed) out of \(viewModel.maximumFreezes) Freezes used")
-                .font(.system(size: 14))
-                .foregroundStyle(.gray)
-                .padding(.top, 18)
+            Text(
+                "\(viewModel.freezesUsed) out of \(viewModel.maximumFreezes) Freezes used"
+            )
+            .font(.system(size: 14))
+            .foregroundStyle(.gray)
+            .padding(.top, 18)
         }
         .padding(.horizontal, 7)
         .padding(.top, 65)
         .padding(.bottom, 49)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .ignoresSafeArea(edges: .top)
+
+        // Long press to open Debug Panel
+        .modifier(
+            DebugPanelTrigger(
+                clock: clock,
+                viewModel: viewModel
+            )
+        )
     }
 }
 
 #Preview {
+
     NavigationStack {
+
         ActivityView(
-            learningGoal: LearningGoal(subject: "Swift", duration: "Week")
+            learningGoal: LearningGoal(
+                subject: "Swift",
+                duration: "Week"
+            )
         )
     }
     .preferredColorScheme(.dark)

@@ -9,17 +9,26 @@
 import SwiftUI
 import Combine
 
-// Controls the simulated date during debugging
+// Controls the simulated date during debugging.
+// It stores how far ahead of the real time we have moved (the offset),
+// so the clock keeps ticking normally and is exactly the real time
+// when nothing has been simulated (offset = 0).
 final class DebugClock: ObservableObject {
 
-    @Published var currentDate = Date()
+    // Seconds added on top of the real time
+    @Published private(set) var offset: TimeInterval = 0
+
+    // Real time + simulated offset
+    var currentDate: Date {
+        Date().addingTimeInterval(offset)
+    }
 
     func advance(by seconds: TimeInterval) {
-        currentDate = currentDate.addingTimeInterval(seconds)
+        offset += seconds
     }
 
     func reset() {
-        currentDate = Date()
+        offset = 0
     }
 }
 

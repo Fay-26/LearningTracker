@@ -24,108 +24,6 @@ struct CalendarView: View {
         count: 7
     )
 
-    // Current goal period
-    private var selectedStartDate: Date {
-        viewModel.goalStartDate
-    }
-
-    private var selectedEndDate: Date {
-        viewModel.goalEndDate
-    }
-
-    // Combine current and previous goal activities
-    private var selectedRecords: [ActivityRecord] {
-
-        let previousRecords = viewModel.goalHistory.flatMap {
-            $0.records
-        }
-
-        return (previousRecords + viewModel.records)
-            .sorted { $0.date < $1.date }
-    }
-
-    // All months from the first activity through December
-    // of the current year, with at least one full calendar year
-    private var months: [Date] {
-
-        let calendar = Calendar.current
-
-        let currentYear = calendar.component(.year, from: viewModel.currentDate)
-
-        guard
-            let january = calendar.date(
-                from: DateComponents(
-                    year: currentYear,
-                    month: 1,
-                    day: 1
-                )
-            ),
-            let december = calendar.date(
-                from: DateComponents(
-                    year: currentYear,
-                    month: 12,
-                    day: 1
-                )
-            )
-        else {
-            return []
-        }
-
-        let firstActivity = selectedRecords
-            .map { $0.date }
-            .min()
-
-        let firstMonth = firstActivity.flatMap {
-            calendar.dateInterval(of: .month, for: $0)?.start
-        } ?? january
-
-        let startMonth = min(firstMonth, january)
-
-        let monthCount = calendar.dateComponents(
-            [.month],
-            from: startMonth,
-            to: december
-        ).month ?? 0
-
-        return (0...max(0, monthCount)).compactMap {
-            calendar.date(
-                byAdding: .month,
-                value: $0,
-                to: startMonth
-            )
-        }
-    }
-
-    // Get historical subject if an older record has no subject saved
-    private func subject(for record: ActivityRecord) -> String {
-
-        if let subject = record.subject {
-            return subject
-        }
-
-        let historicalGoal = viewModel.goalHistory.first {
-            $0.records.contains { $0.id == record.id }
-        }
-
-        return historicalGoal?.learningGoal.subject
-            ?? viewModel.learningGoal.subject
-    }
-
-    // Get historical duration if an older record has no duration saved
-    private func duration(for record: ActivityRecord) -> String {
-
-        if let duration = record.duration {
-            return duration
-        }
-
-        let historicalGoal = viewModel.goalHistory.first {
-            $0.records.contains { $0.id == record.id }
-        }
-
-        return historicalGoal?.learningGoal.duration
-            ?? viewModel.learningGoal.duration
-    }
-
     var body: some View {
 
         VStack(spacing: 0) {
@@ -165,7 +63,7 @@ struct CalendarView: View {
 
                     LazyVStack(spacing: 16) {
 
-                        ForEach(months, id: \.self) { month in
+                        ForEach(viewModel.calendarMonths, id: \.self) { month in
 
                             monthView(for: month)
                                 .id(month)
@@ -245,7 +143,7 @@ struct CalendarView: View {
                         title: record.status == .learned
                             ? "What you learned"
                             : "Learning goal",
-                        value: subject(for: record)
+                        value: viewModel.subject(for: record)
                     )
 
                     Rectangle()
@@ -254,7 +152,7 @@ struct CalendarView: View {
 
                     detailRow(
                         title: "Goal duration",
-                        value: duration(for: record)
+                        value: viewModel.duration(for: record)
                     )
                 }
                 .padding(20)
@@ -363,17 +261,9 @@ struct CalendarView: View {
 
         if let date {
 
-            let calendar = Calendar.current
+            let activity = viewModel.record(for: date)
 
-            // Records are sorted oldest → newest, so `last` picks the
-            // newest one if a day has two (e.g. logged, changed goal, logged again)
-            let activity = selectedRecords.last {
-                calendar.isDate($0.date, inSameDayAs: date)
-            }
-
-            let isSelectedGoalPeriod =
-                date >= calendar.startOfDay(for: selectedStartDate) &&
-                date < selectedEndDate
+            let isSelectedGoalPeriod = viewModel.isInCurrentGoalPeriod(date)
 
             DayCircle(
                 date: date,

@@ -1,4 +1,3 @@
-
 //
 //  Components.swift
 //  LearningTracker
@@ -106,19 +105,6 @@ struct WeekStripView: View {
 
     private let weekdays = ["S", "M", "T", "W", "T", "F", "S"]
 
-    private var weekDates: [Date] {
-        let calendar = Calendar.current
-        let today = calendar.startOfDay(for: viewModel.currentDate)
-
-        guard let week = calendar.dateInterval(of: .weekOfYear, for: today) else {
-            return [today]
-        }
-
-        return (0..<7).compactMap {
-            calendar.date(byAdding: .day, value: $0, to: week.start)
-        }
-    }
-
     var body: some View {
         VStack(spacing: 8.5) {
             HStack(spacing: 0) {
@@ -131,7 +117,7 @@ struct WeekStripView: View {
             }
 
             HStack(spacing: 0) {
-                ForEach(weekDates, id: \.self) { date in
+                ForEach(viewModel.currentWeekDates, id: \.self) { date in
                     DayCircle(
                         date: date,
                         status: viewModel.status(for: date),

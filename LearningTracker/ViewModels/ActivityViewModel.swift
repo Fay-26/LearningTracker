@@ -333,6 +333,135 @@ class ActivityViewModel: ObservableObject {
         }?.status
     }
 
+    // MARK: - Week strip helpers
+
+    // The 7 dates of the current week (follows the app's clock)
+    var currentWeekDates: [Date] {
+
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: currentDate)
+
+        guard let week = calendar.dateInterval(of: .weekOfYear, for: today) else {
+            return [today]
+        }
+
+        return (0..<7).compactMap {
+            calendar.date(byAdding: .day, value: $0, to: week.start)
+        }
+    }
+
+    // MARK: - Calendar helpers
+
+    // All activity (previous goals + current goal), oldest → newest
+    var allRecords: [ActivityRecord] {
+
+        let previousRecords = goalHistory.flatMap {
+            $0.records
+        }
+
+        return (previousRecords + records)
+            .sorted { $0.date < $1.date }
+    }
+
+    // The record shown on a calendar day.
+    // Records are sorted oldest → newest, so `last` picks the
+    // newest one if a day has two (e.g. logged, changed goal, logged again)
+    func record(for date: Date) -> ActivityRecord? {
+
+        allRecords.last {
+            Calendar.current.isDate($0.date, inSameDayAs: date)
+        }
+    }
+
+    // Is this date inside the current goal period?
+    func isInCurrentGoalPeriod(_ date: Date) -> Bool {
+
+        date >= Calendar.current.startOfDay(for: goalStartDate) &&
+        date < goalEndDate
+    }
+
+    // All months from the first activity through December
+    // of the current year, with at least one full calendar year
+    var calendarMonths: [Date] {
+
+        let calendar = Calendar.current
+
+        let currentYear = calendar.component(.year, from: currentDate)
+
+        guard
+            let january = calendar.date(
+                from: DateComponents(
+                    year: currentYear,
+                    month: 1,
+                    day: 1
+                )
+            ),
+            let december = calendar.date(
+                from: DateComponents(
+                    year: currentYear,
+                    month: 12,
+                    day: 1
+                )
+            )
+        else {
+            return []
+        }
+
+        let firstActivity = allRecords
+            .map { $0.date }
+            .min()
+
+        let firstMonth = firstActivity.flatMap {
+            calendar.dateInterval(of: .month, for: $0)?.start
+        } ?? january
+
+        let startMonth = min(firstMonth, january)
+
+        let monthCount = calendar.dateComponents(
+            [.month],
+            from: startMonth,
+            to: december
+        ).month ?? 0
+
+        return (0...max(0, monthCount)).compactMap {
+            calendar.date(
+                byAdding: .month,
+                value: $0,
+                to: startMonth
+            )
+        }
+    }
+
+    // Get historical subject if an older record has no subject saved
+    func subject(for record: ActivityRecord) -> String {
+
+        if let subject = record.subject {
+            return subject
+        }
+
+        let historicalGoal = goalHistory.first {
+            $0.records.contains { $0.id == record.id }
+        }
+
+        return historicalGoal?.learningGoal.subject
+            ?? learningGoal.subject
+    }
+
+    // Get historical duration if an older record has no duration saved
+    func duration(for record: ActivityRecord) -> String {
+
+        if let duration = record.duration {
+            return duration
+        }
+
+        let historicalGoal = goalHistory.first {
+            $0.records.contains { $0.id == record.id }
+        }
+
+        return historicalGoal?.learningGoal.duration
+            ?? learningGoal.duration
+    }
+
     // Archive the current goal before starting a new one
     private func archiveCurrentGoal() {
 

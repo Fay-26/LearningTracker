@@ -1,27 +1,26 @@
-[README.md](https://github.com/user-attachments/files/35018026/README.md)
+## Learning Tracker
 <p align="center">
-  <img src="Screenshots/banner.png" alt="LearningTracker — Build a daily learning habit, one day at a time." width="100%">
+  <img src="https://github.com/user-attachments/assets/97ad0478-fb6b-414f-be63-d8f6fe0efb9c" alt="LearningTracker — Build a daily learning habit, one day at a time." width="100%">
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/iOS-27.0%2B-000000?style=flat-square&logo=apple&logoColor=white" alt="iOS 27.0+">
-  <img src="https://img.shields.io/badge/Swift-5-F05138?style=flat-square&logo=swift&logoColor=white" alt="Swift 5">
-  <img src="https://img.shields.io/badge/SwiftUI-MVVM-FF9230?style=flat-square" alt="SwiftUI and MVVM">
-  <img src="https://img.shields.io/badge/Dependencies-None-3CD3FE?style=flat-square" alt="No dependencies">
+  <img src="https://img.shields.io/badge/iOS-27.0%2B-000000?style=for-the-badge&logo=apple&logoColor=white" alt="iOS 27.0+">
+  <img src="https://img.shields.io/badge/Swift-5-F05138?style=for-the-badge&logo=swift&logoColor=white" alt="Swift 5">
+  <img src="https://img.shields.io/badge/SwiftUI-MVVM-FF9230?style=for-the-badge" alt="SwiftUI · MVVM">
 </p>
 
 <p align="center">
-  <a href="#-overview">Overview</a> ·
-  <a href="#-screenshots">Screenshots</a> ·
-  <a href="#-how-it-works">How It Works</a> ·
-  <a href="#-architecture">Architecture</a> ·
-  <a href="#-getting-started">Getting Started</a> ·
-  <a href="#-roadmap">Roadmap</a>
+  <a href="#overview"><b>Overview</b></a>&nbsp;&nbsp;·&nbsp;&nbsp;
+  <a href="#screenshots"><b>Screenshots</b></a>&nbsp;&nbsp;·&nbsp;&nbsp;
+  <a href="#features"><b>Features</b></a>&nbsp;&nbsp;·&nbsp;&nbsp;
+  <a href="#how-it-works"><b>How It Works</b></a>&nbsp;&nbsp;·&nbsp;&nbsp;
+  <a href="#architecture"><b>Architecture</b></a>&nbsp;&nbsp;·&nbsp;&nbsp;
+  <a href="#getting-started"><b>Getting Started</b></a>
 </p>
 
----
+<br>
 
-##  Overview
+## Overview
 
 **LearningTracker** helps you stay consistent with something you want to learn: Swift, piano, drawing, a new language, anything.
 
@@ -29,60 +28,88 @@ Pick **one goal**, commit for a **week, a month, or a year**, and check in every
 
 > **Consistency without pressure.** Missing one day shouldn't feel like losing everything.
 
----
+<br>
 
-##  Screenshots
+## Screenshots
 
-<table>
+<table align="center">
   <tr>
-    <td><img src="Screenshots/store-1-goal.png" alt="Set a goal" width="260"></td>
-    <td><img src="Screenshots/store-2-log.png" alt="Log today as learned" width="260"></td>
-    <td><img src="Screenshots/store-3-freeze.png" alt="Freeze a day" width="260"></td>
+    <td align="center"><img src="https://github.com/user-attachments/assets/47deabbe-d4d6-49f9-a289-67a7fa79f969" alt="Set a goal" width="250"><br><sub><b>Set a goal</b></sub></td>
+    <td align="center"><img src="https://github.com/user-attachments/assets/63eb214c-e56d-4b2f-bdd4-81840593f7e7" alt="Log today as learned" width="250"><br><sub><b>Log your day</b></sub></td>
+    <td align="center"><img src="https://github.com/user-attachments/assets/e87c9de4-df9d-4741-aa7c-2cc7912dfbc9" alt="Freeze a day" width="250"><br><sub><b>Freeze a day</b></sub></td>
   </tr>
   <tr>
-    <td><img src="Screenshots/store-4-calendar.png" alt="Activity calendar" width="260"></td>
-    <td><img src="Screenshots/store-5-result.png" alt="Goal complete" width="260"></td>
-    <td><img src="Screenshots/store-6-edit.png" alt="Edit your goal" width="260"></td>
+    <td align="center"><img src="https://github.com/user-attachments/assets/5a3d1e3a-2704-4282-91b9-f471987acc65" alt="Activity calendar" width="250"><br><sub><b>Your calendar</b></sub></td>
+    <td align="center"><img src="https://github.com/user-attachments/assets/f0556cba-f77f-41f0-99f4-5ca79de7cb9a" alt="Goal complete" width="250"><br><sub><b>Goal results</b></sub></td>
+    <td align="center"><img src="https://github.com/user-attachments/assets/c7741f6b-42ff-4bdd-a405-9c3b432fd8a8" alt="Edit your goal" width="250"><br><sub><b>Edit your goal</b></sub></td>
   </tr>
 </table>
 
-<!-- Demo video: save a screen recording as Screenshots/demo.gif and add:
-<p align="center"><img src="Screenshots/demo.gif" alt="LearningTracker demo" width="300"></p>
--->
+<br>
 
----
+## Features
 
-##  Features
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      <b>One Clear Goal</b><br>
+      <sub>Choose a subject and commit for a week, a month, or a year.</sub>
+    </td>
+    <td width="50%" valign="top">
+      <b>Daily Check-In</b><br>
+      <sub>Log today as <b>Learned</b> with a single tap.</sub>
+    </td>
+  </tr>
+  <tr>
+    <td valign="top">
+      <b>Freeze Days</b><br>
+      <sub>Take a break without breaking your streak: 2, 8, or 96 per goal.</sub>
+    </td>
+    <td valign="top">
+      <b>Progress at a Glance</b><br>
+      <sub>This week's days, plus your learned and frozen counts.</sub>
+    </td>
+  </tr>
+  <tr>
+    <td valign="top">
+      <b>Activity Calendar</b><br>
+      <sub>Every learned and frozen day, including past goals. Tap a day for details.</sub>
+    </td>
+    <td valign="top">
+      <b>Goal Results</b><br>
+      <sub>A clear success or try-again screen when the goal period ends.</sub>
+    </td>
+  </tr>
+  <tr>
+    <td valign="top">
+      <b>Flexible Goals</b><br>
+      <sub>Change your goal anytime. The old one is archived, not deleted.</sub>
+    </td>
+    <td valign="top">
+      <b>Always Saved</b><br>
+      <sub>Your goal, activity, and history stay saved when you close the app.</sub>
+    </td>
+  </tr>
+</table>
 
-| | Feature | |
-|:---:|---|---|
-| 🎯 | **One clear goal** | Choose a subject and commit for a week, a month, or a year. |
-| 🔥 | **Daily check-in** | Log today as **Learned** with one tap. |
-| ❄️ | **Freeze days** | Take a break without breaking your streak (2 / 8 / 96 per goal). |
-| 📊 | **Progress at a glance** | This week's days, plus your learned and frozen counts. |
-| 🗓️ | **Activity calendar** | Every learned and frozen day, including past goals. Tap a day for details. |
-| 🏁 | **Goal results** | A clear success or try-again screen when the goal period ends. |
-| ✏️ | **Flexible goals** | Change your goal anytime. The old one is archived, not deleted. |
-| 💾 | **Always saved** | Your goal, activity, and history stay saved when you close the app. |
-
----
+<br>
 
 ## How It Works
 
-### 1. Set a goal
+### 1 · Set a Goal
 
 Type what you want to learn and choose a duration. The goal starts at **12:00 AM on the day you create it** and ends on a real calendar date.
 
-| Duration | Goal period | Example (starts Nov 18) | Freezes |
-|---|---|---|:---:|
+| Duration | Goal Period | Example (starts Nov 18) | Freezes |
+|:--|:--|:--|:--:|
 | **Week** | 7 days | Nov 18 – Nov 24 | 2 |
 | **Month** | 1 calendar month | Nov 18 – Dec 17 | 8 |
 | **Year** | 1 calendar year | Nov 18 – Nov 17 next year | 96 |
 
-### 2. Check in once a day
+### 2 · Check In Once a Day
 
 | Button | Result |
-|---|---|
+|:--|:--|
 | **Log as Learned** | Today is saved as `learned` and the **Learned** count goes up. |
 | **Freeze for a day** | Today is saved as `frozen`, the **Freezed** count goes up, and one freeze is used. |
 
@@ -91,84 +118,62 @@ Type what you want to learn and choose a duration. The goal starts at **12:00 AM
 - **Freeze limit:** **Freeze for a day** is disabled once all freezes for the goal are used.
 - **After the goal ends:** logging and freezing stop.
 
-### 3. Keep your streak
+### 3 · Keep Your Streak
 
 Learned **and** frozen days both keep your streak going, as long as **no more than 32 hours** pass between one activity and the next.
 
-```text
-Mon 8 PM  🔥 Learned
-               │  24h ✓
-Tue 8 PM  ❄️ Frozen
-               │  26h ✓
-Wed 10 PM 🔥 Learned        →  streak = 3
-```
+| Activity | Time since previous | Streak |
+|:--|:--|:--:|
+| Mon 8 PM · Learned | – | 1 |
+| Tue 8 PM · Frozen | 24 hours | 2 |
+| Wed 10 PM · Learned | 26 hours | 3 |
 
 The streak resets to **0** if more than 32 hours pass, or when you update your goal.
 
-### 4. Finish the goal
+### 4 · Finish the Goal
 
 When the goal period ends, the home screen shows your result:
 
-- ✅ **Well done!** You logged **Learned** on **every** day of the goal.
-- ❌ **You didn't reach your goal this time.** At least one day wasn't learned.
+| Result | When |
+|:--|:--|
+| **Well done!** | You logged **Learned** on **every** day of the goal. |
+| **You didn't reach your goal this time.** | At least one day wasn't learned. |
 
 > **Frozen days protect your streak, but they don't count as learned days.**
-> For a week: 7 learned = ✅ · 6 learned + 1 frozen = ❌
+> For a week: 7 learned = completed · 6 learned + 1 frozen = not completed.
 
 Tap **Set a goal** to start the next one.
 
-### 5. Change your goal
+### 5 · Change Your Goal
 
-Tap ✏️, change the subject or duration, and confirm **Update**. The app archives the current goal with all its days, then starts a fresh one from today with a new streak, counts, and freezes. If nothing changed, nothing is reset.
+Tap the edit icon, change the subject or duration, and confirm **Update**. The app archives the current goal with all its days, then starts a fresh one from today with a new streak, counts, and freezes. If nothing changed, nothing is reset.
 
----
+<br>
 
-## 🏗️ Architecture
+## Architecture
 
 LearningTracker uses **MVVM**: views draw the screens, view models hold the logic, and models describe the data.
 
-```mermaid
-flowchart LR
-    subgraph Views
-        CV[ContentView] --> OV[OnboardingView]
-        CV --> AV[ActivityView]
-        AV --> CAL[CalendarView]
-        AV --> EV[EditLearningGoalView]
-        AV --> RV[GoalResultView]
-    end
 
-    subgraph ViewModels
-        OVM[OnboardingViewModel]
-        AVM[ActivityViewModel]
-    end
+<p align="center">
+  <sub>Made with SwiftUI by <a href="https://github.com/Fay-26"><b>Fay Alabdulqader</b></a></sub>
+</p><img width="2400" height="1500" alt="architecture" src="https://github.com/user-attachments/assets/d3aaa2e0-8022-44d0-8391-6a8723de9a93" />
 
-    subgraph Models
-        LG[LearningGoal]
-        AR[ActivityRecord]
-        GH[GoalHistory]
-    end
-
-    OV --> OVM
-    AV & CAL & RV --> AVM
-    EV -. new goal .-> AVM
-    OVM --> LG
-    AVM --> LG & AR & GH
-    OVM & AVM --> UD[(UserDefaults)]
-```
 
 | Layer | Responsibility |
-|---|---|
+|:--|:--|
 | **Models** | Plain data: `LearningGoal`, `ActivityRecord` (+ `ActivityStatus`), `GoalHistory` |
 | **ViewModels** | `ActivityViewModel` handles logging, freezes, the streak, goal dates, completion, archiving, and saving. `OnboardingViewModel` builds and saves the first goal. |
 | **Views** | Display data and pass taps to the view models. No business rules. |
 
 <details>
-<summary><b>📂 Project structure</b></summary>
+<summary><b>Project Structure</b></summary>
+<br>
 
 ```text
 LearningTracker/
 ├── LearningTracker.xcodeproj
-├── Screenshots/
+├── architecture.png
 └── LearningTracker/
     ├── LearningTrackerApp.swift      # App entry (dark mode)
     ├── ContentView.swift             # Onboarding or Activity
@@ -194,10 +199,11 @@ LearningTracker/
 </details>
 
 <details>
-<summary><b>🧩 Data models</b></summary>
+<summary><b>Data Models</b></summary>
+<br>
 
 | Model | Properties |
-|---|---|
+|:--|:--|
 | `LearningGoal` | `subject: String`, `duration: String` (`"Week"`, `"Month"`, `"Year"`) |
 | `ActivityRecord` | `date: Date`, `status: ActivityStatus`, `subject: String?`, `duration: String?`. `Codable` and `Identifiable`; the `id` is the day, e.g. `2026-11-18`. |
 | `ActivityStatus` | `.learned`, `.frozen` |
@@ -206,10 +212,13 @@ LearningTracker/
 </details>
 
 <details>
-<summary><b>🎨 Shared UI components</b> (<code>Components.swift</code>)</summary>
+<summary><b>Shared UI Components</b></summary>
+<br>
+
+All in `Components.swift`.
 
 | Component | Purpose |
-|---|---|
+|:--|:--|
 | `ActivityHeader` | **Activity** title, date, and the top-right icons |
 | `GlassIcon` | Round glass icon buttons |
 | `OrangeButtonLabel` | Orange capsule buttons (**Start Learning**, **Set a goal**) |
@@ -220,12 +229,13 @@ LearningTracker/
 </details>
 
 <details>
-<summary><b>💾 Data persistence</b></summary>
+<summary><b>Data Persistence</b></summary>
+<br>
 
 Everything is stored **on the device** in `UserDefaults`. Lists are saved as JSON with `Codable`.
 
 | Key | Stores |
-|---|---|
+|:--|:--|
 | `learningGoalSubject` / `learningGoalDuration` | The current goal |
 | `goalStartDate` | When the current goal started |
 | `activityRecords` | The current goal's learned and frozen days |
@@ -236,21 +246,12 @@ When you update a goal, its records are **moved into `goalHistory`** before the 
 
 </details>
 
-<details>
-<summary><b>🛠️ Debug panel</b></summary>
-
-Available in **Debug builds only**. Long-press the Activity screen for 1 second to open it.
-
-It has a **simulated clock** (+1 hour, +1 day, +33 hours, jump to the goal's end, reset) and shows live values such as the streak, goal dates, and freezes used. Use it to test streaks, midnight unlocking, and goal results without waiting real days.
-
-</details>
-
----
+<br>
 
 ## Tech Stack
 
 | | |
-|---|---|
+|:--|:--|
 | **UI** | SwiftUI with Liquid Glass (`glassEffect`) |
 | **Architecture** | MVVM |
 | **State** | Combine: `ObservableObject`, `@Published`, `Timer.publish` |
@@ -258,9 +259,9 @@ It has a **simulated clock** (+1 hour, +1 day, +33 hours, jump to the goal's end
 | **Target** | iOS 27.0+ · iPhone & iPad · Swift 5 language mode |
 | **Dependencies** | None. Apple frameworks only. |
 
----
+<br>
 
-##  Getting Started
+## Getting Started
 
 **Requirements:** a Mac with **Xcode 27** or later, and an iOS 27 Simulator or device.
 
@@ -270,44 +271,10 @@ cd LearningTracker
 open LearningTracker.xcodeproj
 ```
 
-Choose an iPhone Simulator in the Xcode toolbar and press **⌘R**.
+Choose an iPhone Simulator in the Xcode toolbar and press **Command + R**.
 
 > **On a real device:** in **Signing & Capabilities**, select your own **Team**. If Xcode reports a conflict, change the **Bundle Identifier**.
 
----
-
-## Roadmap
-
-### Known limitations
-
-- The streak is calculated, but it is only shown in the Debug panel, not on the home screen.
-- The 32-hour rule uses exact times, so logging early one day and late the next can reset the streak.
-- The home week strip shows the **current** goal only. Past goals appear in the calendar.
-- The week strip's letters assume weeks start on Sunday.
-- The calendar shows months up to **December of the current year**.
-- One goal at a time, data stored locally only, dark mode only, and no automated tests.
-
-### Ideas for the future *(not implemented)*
-
-- [ ] Show the streak on the home screen
-- [ ] Daily reminder notifications
-- [ ] Multiple goals at once
-- [ ] A past-goals screen with results
-- [ ] iCloud sync and export
-- [ ] Home Screen widgets
-- [ ] Unit tests for the streak, freeze, and completion logic
+<br>
 
 ---
-
-<p align="center">
-  Made with SwiftUI by <a href="https://github.com/Fay-26"><b>Fay Alabdulqader</b></a><br>
-  <sub>Learn a little every day 🔥</sub>
-</p>
-<img width="2400" height="1260" alt="banner" src="https://github.com/user-attachments/assets/97ad0478-fb6b-414f-be63-d8f6fe0efb9c" />
-<img width="1242" height="2688" alt="store-6-edit" src="https://github.com/user-attachments/assets/c7741f6b-42ff-4bdd-a405-9c3b432fd8a8" />
-<img width="1242" height="2688" alt="store-5-result" src="https://github.com/user-attachments/assets/f0556cba-f77f-41f0-99f4-5ca79de7cb9a" />
-<img width="1242" height="2688" alt="store-4-calendar" src="https://github.com/user-attachments/assets/5a3d1e3a-2704-4282-91b9-f471987acc65" />
-<img width="1242" height="2688" alt="store-3-freeze" src="https://github.com/user-attachments/assets/e87c9de4-df9d-4741-aa7c-2cc7912dfbc9" />
-<img width="1242" height="2688" alt="store-2-log" src="https://github.com/user-attachments/assets/63eb214c-e56d-4b2f-bdd4-81840593f7e7" />
-<img width="1242" height="2688" alt="store-1-goal" src="https://github.com/user-attachments/assets/47deabbe-d4d6-49f9-a289-67a7fa79f969" />
-

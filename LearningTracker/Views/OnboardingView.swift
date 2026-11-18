@@ -74,8 +74,10 @@ struct OnboardingView: View {
                         OrangeButtonLabel(title: "Set a goal")
                     }
                 } else {
-                    NavigationLink {
-                        ActivityView(learningGoal: viewModel.createGoal())
+                    // Only save the goal. ContentView sees the saved goal
+                    // and shows the Activity page by itself (just once).
+                    Button {
+                        viewModel.saveGoal()
                     } label: {
                         OrangeButtonLabel(title: "Start Learning")
                     }

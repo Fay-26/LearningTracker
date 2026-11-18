@@ -60,6 +60,7 @@ class ActivityViewModel: ObservableObject {
 
     var canFreeze: Bool {
 
+        !isGoalPeriodFinished &&
         freezesUsed < maximumFreezes &&
         !hasLearnedToday &&
         !hasFrozenToday
@@ -96,6 +97,12 @@ class ActivityViewModel: ObservableObject {
         default:
             return goalStartDate
         }
+    }
+
+    // The app's "now" (real time, or simulated time from the Debug Panel).
+    // Views use this instead of Date() so everything follows the same clock.
+    var currentDate: Date {
+        now()
     }
 
     // Has the goal period ended?
@@ -318,10 +325,6 @@ class ActivityViewModel: ObservableObject {
         updateStreak()
     }
 
-    func refreshStreak() {
-        updateStreak()
-    }
-
     // Get activity status for a calendar date
     func status(for date: Date) -> ActivityStatus? {
 
@@ -335,16 +338,14 @@ class ActivityViewModel: ObservableObject {
 
         let archiveDate = min(now(), goalEndDate)
 
-        let currentGoalRecords = records.filter {
-            $0.date >= goalStartDate &&
-            $0.date < archiveDate
-        }
-
+        // `records` only ever holds the current goal's activity,
+        // so we archive all of it. Filtering here could drop a record
+        // and it would then be lost when `records` is cleared.
         let history = GoalHistory(
             learningGoal: learningGoal,
             startDate: goalStartDate,
             endDate: archiveDate,
-            records: currentGoalRecords
+            records: records
         )
 
         goalHistory.append(history)
@@ -399,7 +400,13 @@ class ActivityViewModel: ObservableObject {
 
         refresh()
 
-        guard !hasLearnedToday && !hasFrozenToday else {
+        // No logging after the goal period has ended,
+        // or if something was already logged today
+        guard
+            !isGoalPeriodFinished,
+            !hasLearnedToday,
+            !hasFrozenToday
+        else {
             return
         }
 

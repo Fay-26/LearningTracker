@@ -20,7 +20,7 @@ struct GoalResultView: View {
         VStack(spacing: 0) {
 
             // Header
-            ActivityHeader {
+            ActivityHeader(date: viewModel.currentDate) {
 
                 Button {
                     onOpenCalendar()

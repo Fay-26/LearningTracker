@@ -16,6 +16,7 @@ struct EditLearningGoalView: View {
     @State private var selectedDuration: String
     @State private var showingConfirmation = false
 
+    private let originalGoal: LearningGoal
     let onSave: (LearningGoal) -> Void
 
     init(
@@ -24,11 +25,18 @@ struct EditLearningGoalView: View {
     ) {
         _learningGoal = State(initialValue: existingGoal.subject)
         _selectedDuration = State(initialValue: existingGoal.duration)
+        originalGoal = existingGoal
         self.onSave = onSave
     }
 
     private var trimmedGoal: String {
         learningGoal.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    // True only if the subject or duration is different from before
+    private var hasGoalChanged: Bool {
+        trimmedGoal != originalGoal.subject ||
+        selectedDuration != originalGoal.duration
     }
 
     var body: some View {
@@ -88,7 +96,11 @@ struct EditLearningGoalView: View {
             Button("Dismiss", role: .cancel) { }
 
             Button("Update") {
-                onSave(LearningGoal(subject: trimmedGoal, duration: selectedDuration))
+                // Only start a new goal if something actually changed,
+                // so tapping Update with no changes doesn't reset the streak
+                if hasGoalChanged {
+                    onSave(LearningGoal(subject: trimmedGoal, duration: selectedDuration))
+                }
                 dismiss()
             }
         } message: {

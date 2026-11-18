@@ -50,7 +50,7 @@ struct CalendarView: View {
 
         let calendar = Calendar.current
 
-        let currentYear = calendar.component(.year, from: Date())
+        let currentYear = calendar.component(.year, from: viewModel.currentDate)
 
         guard
             let january = calendar.date(
@@ -180,8 +180,8 @@ struct CalendarView: View {
 
                     let currentMonth = calendar.dateInterval(
                         of: .month,
-                        for: Date()
-                    )?.start ?? Date()
+                        for: viewModel.currentDate
+                    )?.start ?? viewModel.currentDate
 
                     proxy.scrollTo(currentMonth, anchor: .top)
                 }
@@ -365,7 +365,9 @@ struct CalendarView: View {
 
             let calendar = Calendar.current
 
-            let activity = selectedRecords.first {
+            // Records are sorted oldest → newest, so `last` picks the
+            // newest one if a day has two (e.g. logged, changed goal, logged again)
+            let activity = selectedRecords.last {
                 calendar.isDate($0.date, inSameDayAs: date)
             }
 
@@ -377,7 +379,8 @@ struct CalendarView: View {
                 date: date,
                 status: activity?.status,
                 size: 39,
-                fontSize: 17
+                fontSize: 17,
+                today: viewModel.currentDate
             )
             .frame(width: 43, height: 43)
             .overlay {

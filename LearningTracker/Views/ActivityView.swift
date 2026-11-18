@@ -123,7 +123,7 @@ struct ActivityView: View {
         VStack(spacing: 0) {
 
             // Header
-            ActivityHeader {
+            ActivityHeader(date: viewModel.currentDate) {
 
                 NavigationLink {
                     CalendarView(viewModel: viewModel)

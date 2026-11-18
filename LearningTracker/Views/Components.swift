@@ -1,3 +1,4 @@
+
 //
 //  Components.swift
 //  LearningTracker
@@ -65,8 +66,11 @@ struct DayCircle: View {
     var size: CGFloat = 43
     var fontSize: CGFloat = 18
 
+    // The app's "today" (follows the Debug Panel clock when passed in)
+    var today: Date = Date()
+
     private var isToday: Bool {
-        Calendar.current.isDateInToday(date)
+        Calendar.current.isDate(date, inSameDayAs: today)
     }
 
     private var circleColor: Color {
@@ -104,7 +108,7 @@ struct WeekStripView: View {
 
     private var weekDates: [Date] {
         let calendar = Calendar.current
-        let today = calendar.startOfDay(for: Date())
+        let today = calendar.startOfDay(for: viewModel.currentDate)
 
         guard let week = calendar.dateInterval(of: .weekOfYear, for: today) else {
             return [today]
@@ -128,7 +132,11 @@ struct WeekStripView: View {
 
             HStack(spacing: 0) {
                 ForEach(weekDates, id: \.self) { date in
-                    DayCircle(date: date, status: viewModel.status(for: date))
+                    DayCircle(
+                        date: date,
+                        status: viewModel.status(for: date),
+                        today: viewModel.currentDate
+                    )
                         .frame(maxWidth: .infinity)
                 }
             }
@@ -192,6 +200,9 @@ struct StatCards: View {
 
 struct ActivityHeader<Trailing: View>: View {
 
+    // The date shown under "Activity" (the app's clock when passed in)
+    var date: Date = Date()
+
     @ViewBuilder let trailing: () -> Trailing
 
     var body: some View {
@@ -201,7 +212,7 @@ struct ActivityHeader<Trailing: View>: View {
                     .font(.system(size: 34, weight: .bold))
                     .foregroundStyle(.white)
 
-                Text(headerDateString())
+                Text(headerDateString(date))
                     .font(.system(size: 16))
                     .foregroundStyle(.gray)
             }
